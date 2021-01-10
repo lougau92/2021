@@ -1,6 +1,38 @@
-// console.log('hello world');
+// { % comment % } < !DOCTYPE html >
+//     <
+//     html lang = "en" >
+//     <
+//     head >
+//     <
+//     meta charset = "UTF-8" >
+//     <
+//     meta name = "viewport"
+// content = "width=device-width, initial-scale=1.0" >
+//     <
+//     script type = "text/javascript"
+// src = "jndex.js" > < /script>   <
+//     title > Document < /title> <
+//     /head> <
+//     body onload = "haha()" >
+//     <
+//     p > I took a shit in Ibiza < /p> <
+//     h1 > 2021 - 365 hours of reading < /h1> <
+//     button type = "button"
+// onclick = "lol()" >
+//     Add Minutes <
+//     /button> <
+//     input type = "text"
+// id = "lolol"
+// name = "fname" >
+//     <
+//     label
+// for = "fname" > Minutes < /label><br><br> <
+//     div id = "lol"
+// style = "margin:auto;" > THIS IS THE NUMBER < /div> <
+//     /body> <
+//     /html>  {% endcomment %}/ / console.log('hello world');
 
-// function printText(boxid, nb) {
+// // function printText(boxid, nb) {
 
 //     var fh = fs.fopen("timee.txt", 3); // Open the file for writing
 
