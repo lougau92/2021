@@ -19,6 +19,7 @@ function addmin() {
             }
             var newmin = parseInt(currentMin) + parseInt(time2add);
             update(newmin)
+            updateHist(time2add)
         } catch (err) {
             document.getElementById("nbBox").innerHTML = err;
         }
@@ -34,12 +35,31 @@ function refresh() {
         localStorage.setItem("backup ".concat(d), currentMin);
     }
     update(0)
+    var hist = document.getElementById("hist")
+    hist.removeChild(hist.children)
 }
 
 function update(nb) {
     document.getElementById("nbBox").innerHTML = box_time_label + timeConvert(nb);
     document.getElementById("progress").value = nb / 60
     localStorage.setItem("min", nb.toString());
+}
+
+function updateHist(nb) {
+    const div = document.createElement('div');
+    const hist = document.getElementById("hist")
+    var d = new Date();
+
+    div.className = 'row';
+
+    div.innerHTML = d + ", " + nb + " minutes of reading";
+
+    hist.prepend(div);
+    const childern = hist.childNodes;
+    if (childern.length > 4) {
+        hist.removeChild(hist.lastChild)
+    }
+
 }
 
 function timeConvert(n) {
