@@ -1,18 +1,60 @@
-.container {
-    display: flex;
-    flex-direction: column;
-    border: solid 6px black;
-    width: 530px;
-}
-
-.row {
-    padding: 20px
-}
-
-.headerr {
-    margin-top: 100px;
-    padding: 6px;
-    width: 530px;
-    background: black;
-    color: white;
-}
+    .container {
+        display: flex;
+        flex-direction: column;
+        border: solid 6px black;
+        width: 530px;
+    }
+    
+    .row {
+        padding: 20px
+    }
+    
+    .weeklystats {
+        border: solid 4px blue;
+        display: flex;
+        flex-direction: column;
+        height: 400px;
+        width: 600px;
+    }
+    
+    .weekbox {
+        display: flex;
+        flex-direction: row
+    }
+    
+    .weekrow {
+        display: flex;
+        flex-direction: row;
+        border: solid 6px black;
+        height: 66px;
+    }
+    
+    .labelweek {
+        margin-top: 10px;
+        padding: 5px
+    }
+    
+    .hbox {
+        margin-top: 10px;
+        margin-left: 8px;
+        height: 40px;
+        width: 40px;
+        background: red;
+        border: solid 3px black;
+    }
+    
+    .black_header {
+        margin-top: 100px;
+        padding: 6px;
+        width: 530px;
+        background: black;
+        color: white;
+    }
+    
+    .blue_header {
+        margin-top: 100px;
+        padding: 6px;
+        width: auto;
+        background: blue;
+        color: white;
+    }
