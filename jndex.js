@@ -1,10 +1,50 @@
-var box_time_label = "Total reading time: "
-
-function haha() {
-    document.getElementById("nbBox").innerHTML = box_time_label + localStorage.getItem("min");
+Date.prototype.getWeek = function() {
+    var onejan = new Date(this.getFullYear(), 0, 1);
+    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
+var box_time_label = "Total reading time: "
 
+var currentDate = new Date()
+var currentWeek = currentDate.getWeek();
+
+
+function haha() {
+    console.log(currentWeek)
+    document.getElementById("nbBox").innerHTML = box_time_label + localStorage.getItem("min");
+    loadHist()
+    loadWeeks()
+}
+
+function loadWeeks() {
+    for (var i = 0; i < 5; i++) {
+        loadWeekBox(currentWeek - 4 + i)
+    }
+}
+
+function loadHist() {
+    var recordNb = parseInt(localStorage.getItem("recordNb"));
+    for (var i = (recordNb - 3); i <= recordNb; i++) {
+        if (i <= 0) {
+            continue
+        }
+        loadHistBox(i)
+    }
+}
+
+function loadHistBox(boxNb) {
+    var recordNb = "record " + boxNb
+    var minRecord = localStorage.getItem(recordNb)
+    var dateKey = "date " + boxNb
+    var dateRecord = localStorage.getItem(dateKey)
+    updateHist(minRecord, dateRecord)
+}
+
+function loadWeekBox(weekNb) {
+    var recordNb = "weekRecord " + weekNb
+    var weekRecord = localStorage.getItem(recordNb)
+    updateStats(weekRecord, weekNb)
+}
 
 function addmin() {
     var time2add = document.getElementById("inNb").value;
@@ -17,17 +57,33 @@ function addmin() {
             case "h":
                 time2add = time2add * 60
         }
+        var d = new Date;
+
         var newmin = parseInt(currentMin) + parseInt(time2add);
+
         update(newmin)
-        updateHist(time2add)
+
+        updateHist(time2add, d)
+        var currentRecord = parseInt(localStorage.getItem("recordNb"));
+        if (!isNaN(currentRecord)) {
+            currentRecord = currentRecord + 1;
+        } else {
+            currentRecord = 0;
+        }
+        localStorage.setItem("record " + currentRecord, time2add);
+        localStorage.setItem("date " + currentRecord, d);
+        localStorage.setItem("recordNb", currentRecord)
             // } catch (err) {
             //     document.getElementById("nbBox").innerHTML = err;
             // }
     } else {
         update(time2add)
     }
-    updateStats(time2add)
+    updateStats(time2add, currentWeek)
+
 };
+
+
 
 function refresh() {
     var currentMin = localStorage.getItem("min")
@@ -36,15 +92,20 @@ function refresh() {
         localStorage.setItem("backup ".concat(d), currentMin);
     }
     update(0)
+
+    localStorage.setItem("recordNb", "0")
+
     var hist = document.getElementById("hist")
     while (hist.firstChild != null) {
         hist.removeChild(hist.firstChild)
     }
-    var stats = document.getElementById("weeklystats")
+    var stats = document.getElementById("weeklybox")
     while (stats.firstChild != null) {
         stats.removeChild(stats.firstChild)
     }
-    localStorage.setItem("weekmin", "0")
+    for (var i = 0; i < 5; i++) {
+        localStorage.setItem("weekRecord " + (currentWeek - i), "0")
+    }
 }
 
 function update(nb) {
@@ -53,35 +114,38 @@ function update(nb) {
     localStorage.setItem("min", nb.toString());
 }
 
-var week = 5;
-
 function nextWeek() {
-    week = week + 1;
+    currentWeek = currentWeek + 1;
 }
 
-function updateStats(nb) {
+function updateStats(nb, weekNb) {
+    if (isNaN(nb)) { nb = 0 }
     const stats_table = document.getElementById("weeklybox")
     const childern = stats_table.childNodes;
     var weekbox;
-    console.log(childern.length)
-    console.log(week)
+    console.log(childern.length);
+    console.log(weekNb)
 
     // var week = d.getWeek()
 
     if (childern.length == 1) {
-        newWeek(week)
-    } else if (document.getElementById(week.toString()) == null) {
-        newWeek(week)
+        newWeek(weekNb)
+    } else if (document.getElementById(weekNb.toString()) == null) {
+        if (childern.length >= 5) {
+            stats_table.removeChild(stats_table.lastChild)
+        }
+        newWeek(weekNb)
     }
-    weekbox = document.getElementById(week.toString());
-    var currentMin = parseInt(localStorage.getItem("weekmin"));
+    weekbox = document.getElementById(weekNb.toString());
+    var currentMin = parseInt(localStorage.getItem("weekRecord " + weekNb));
+    if (isNaN(currentMin)) { currentMin = 0 }
     var newMin = currentMin + parseInt(nb);
-    localStorage.setItem("weekmin", newMin.toString());
-    setLengthWeekBox(weekbox)
+    localStorage.setItem("weekRecord " + weekNb, newMin.toString());
+    setLengthWeekBox(weekbox, newMin)
 }
 
 function newWeek(weekNb) {
-    localStorage.setItem("weekmin", "0")
+    localStorage.setItem("weekRecord " + weekNb, "0")
     const stats_table = document.getElementById("weeklybox")
 
     const week_row = document.createElement('div');
@@ -98,11 +162,13 @@ function newWeek(weekNb) {
 
     week_row.appendChild(labl);
     week_row.appendChild(weekbox);
-    stats_table.appendChild(week_row);
+    stats_table.prepend(week_row);
 }
 
-function setLengthWeekBox(weekbox) {
-    var nb = localStorage.getItem("weekmin")
+function setLengthWeekBox(weekbox, nb) {
+    if (isNaN(nb)) {
+        nb = 0;
+    }
     while (weekbox.firstChild != null)
         weekbox.removeChild(weekbox.firstChild)
     var rest = nb % 60;
@@ -121,10 +187,9 @@ function setLengthWeekBox(weekbox) {
     }
 }
 
-function updateHist(nb) {
+function updateHist(nb, d) {
     const hist_row = document.createElement('div');
     const hist_table = document.getElementById("hist")
-    var d = new Date();
 
     hist_row.className = 'row';
 
@@ -145,11 +210,6 @@ function timeConvert(n) {
     var minutes = (hours - rhours) * 60;
     var rminutes = Math.round(minutes);
     return (rhours + " hour(s) and " + rminutes + " minute(s).").toString();
-}
-
-Date.prototype.getWeek = function() {
-    var onejan = new Date(this.getFullYear(), 0, 1);
-    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
 // { % comment % } < html lang = "en" >
