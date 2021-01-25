@@ -169,6 +169,9 @@ function setLengthWeekBox(weekbox, nb) {
     if (isNaN(nb)) {
         nb = 0;
     }
+    if (nb > 7 * 60) {
+        nb = 7 * 60;
+    }
     while (weekbox.firstChild != null)
         weekbox.removeChild(weekbox.firstChild)
     var rest = nb % 60;
